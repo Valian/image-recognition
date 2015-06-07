@@ -9,3 +9,8 @@ int get_pixel_value(cv::Vec3b pixel)
 {
 	return pixel[0] + pixel[1] + pixel[2];
 }
+
+bool is_in_image(int row, int column, cv::Mat img) 
+{
+	return row >= 0 && column >= 0 && row < img.rows && column < img.cols;
+}

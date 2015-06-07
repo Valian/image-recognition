@@ -4,6 +4,7 @@
 #include "FilterRunner.cpp"
 #include "Filters.h"
 #include "MatrixFilters.h"
+#include "Segmentator.h"
 #include <iostream>
 #include <math.h>
 
@@ -226,7 +227,7 @@ cv::Mat calculate(cv::Mat& I)
 	return copy;
 }
 
-cv::Mat run(cv::Mat& img)
+cv::Mat_<uchar> convertToGrayscale(cv::Mat& img)
 {
 	cv::Mat_<cv::Vec3b> image = img;
 
@@ -235,6 +236,13 @@ cv::Mat run(cv::Mat& img)
 	ThresholdFilter threshold_filter(cv::Vec3b(50, 50, 50), cv::Vec3b(50, 50, 50));
 	cv::Mat_<uchar> grayscale = threshold_filter.Apply(image);
 	return grayscale;
+}
+
+void findSegments(cv::Mat_<uchar>& img)
+{
+	Segmentator segmentator(200);
+	vector<Segment> segments = segmentator.Segmentate(img);
+	cout << segments.size() << endl;
 }
 
 
@@ -246,7 +254,9 @@ int main(int, char *[])
 	//cv::Mat max = calculate(image);
 
 	cv::imshow("Image", image);
-	cv::imshow("Modified", run(image));
+	cv::Mat_<uchar> grayscale = convertToGrayscale(image);
+	findSegments(grayscale);
+	cv::imshow("Modified", grayscale);
 	cv::waitKey(-1);
 	return 0;
 }

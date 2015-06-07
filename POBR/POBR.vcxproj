@@ -83,6 +83,7 @@
     <ClCompile Include="Filters.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MatrixFilter.cpp" />
+    <ClCompile Include="Segmentator.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
