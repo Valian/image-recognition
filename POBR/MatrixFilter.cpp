@@ -8,16 +8,16 @@ cv::Vec3b MatrixFilter::CalculatePixel(cv::Mat_<cv::Vec3b>& img, int imageRow, i
 	{
 		float sum = 0;
 		float filterSum = 0;
-		for (int row = 0; row < matrix.rows; ++row)
+		for (int row = 0; row < size; ++row)
 		{
-			for (int column = 0; column < matrix.cols; ++column)
+			for (int column = 0; column < size; ++column)
 			{
-				int currRow = row - matrix.rows / 2 + imageRow;
-				int currCol = column - matrix.cols / 2 + imageColumn;
+				int currRow = row - size / 2 + imageRow;
+				int currCol = column - size / 2 + imageColumn;
 				if (currRow >= 0 && currRow < img.rows && currCol >= 0 && currCol < img.cols) 
 				{
-					filterSum += matrix(row, column);
-					sum += matrix(row, column) * img(currRow, currCol)[color];
+					filterSum += matrix[row * size + column];
+					sum += matrix[row * size + column] * img(currRow, currCol)[color];
 				}
 			}
 		}

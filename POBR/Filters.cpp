@@ -3,14 +3,14 @@
 #include <vector>
 #include <algorithm>
 
-bool cmp(cv::Vec3b i, cv::Vec3b j) 
+bool cmp(cv::Vec3b& i, cv::Vec3b& j) 
 { 
 	return get_pixel_value(i) < get_pixel_value(j); 
 }
 
 cv::Vec3b MedianFilter::CalculatePixel(cv::Mat_<cv::Vec3b>& img, int imageRow, int imageColumn)
 {
-	std::vector<cv::Vec3b> pixels;
+	points.clear();
 	int number_of_pixels = 0;
 	for (int row = 0; row < size; ++row)
 	{
@@ -21,21 +21,13 @@ cv::Vec3b MedianFilter::CalculatePixel(cv::Mat_<cv::Vec3b>& img, int imageRow, i
 			if (currRow >= 0 && currRow < img.rows && currCol >= 0 && currCol < img.cols)
 			{
 				number_of_pixels++;
-				pixels.push_back(img(currRow, currCol));
+				points.push_back(img(currRow, currCol));
 			}
 		}
-	}
-	std::sort(pixels.begin(), pixels.end(), cmp);
-	if (number_of_pixels % 2 == 1) 
-	{
-		return pixels[pixels.size() / 2 + 1];
-	}
-	else 
-	{
-		cv::Vec3b pixel1 = pixels[pixels.size() / 2];
-		cv::Vec3b pixel2 = pixels[pixels.size() / 2 + 1];
-		return (pixel1 + pixel2) / 2;
-	}
+	}	
+	
+	std::nth_element(points.begin(), points.begin() + points.size() / 2, points.end(), cmp);
+	return points[points.size() / 2];
 }
 
 cv::Vec3b ContrastFilter::CalculatePixel(cv::Mat_<cv::Vec3b>& img, int imageRow, int imageColumn)
@@ -58,4 +50,32 @@ uchar ThresholdFilter::CalculatePixel(cv::Mat_<cv::Vec3b>& img, int imageRow, in
 	}
 
 	return 255;
+}
+
+uchar ErosionFilter::CalculatePixel(cv::Mat_<uchar>& img, int imageRow, int imageColumn)
+{
+	for (int row = imageRow - size / 2; row <= imageRow + size / 2; row++)
+	{
+		for (int column = imageColumn - size / 2; column <= imageColumn + size / 2; column++)
+		{
+			if (is_in_image(row, column, img) && img(row, column) < 128) {
+				return 0;
+			}
+		}
+	}
+	return 255;
+}
+
+uchar DilationFilter::CalculatePixel(cv::Mat_<uchar>& img, int imageRow, int imageColumn)
+{
+	for (int row = imageRow - size / 2; row <= imageRow + size / 2; row++)
+	{
+		for (int column = imageColumn - size / 2; column <= imageColumn + size / 2; column++)
+		{
+			if (is_in_image(row, column, img) && img(row, column) > 128) {
+				return 255;
+			}
+		}
+	}
+	return 0;
 }

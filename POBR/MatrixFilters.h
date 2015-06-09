@@ -8,29 +8,11 @@
 class BoxFilter : public MatrixFilter
 {
 	public:
-		BoxFilter(int size)
+		BoxFilter(int s)
 		{
-			matrix = cv::Mat_<float>(size, size, 1);
-		}
-};
-
-class GaussianFilter : public MatrixFilter {
-	public:
-		GaussianFilter(int size)
-		{
-			matrix = cv::Mat_<float>(size, size);
-			double sigma = 1;
-			double mean = size / 2;
-			for (int x = 0; x < size; ++x)
-			{
-				for (int y = 0; y < size; ++y)
-				{
-					matrix(x, y) = exp(-0.5 * (pow((x - mean) / sigma, 2.0) + pow((y - mean) / sigma, 2.0)))
-						/ (2 * M_PI * sigma * sigma);
-					std::cout << matrix(x, y) << ", ";
-				}
-				std::cout << std::endl;
-			}
+			size = s;
+			matrix = new float[size * size];
+			for (int i = 0; i < size*size; i++) matrix[i] = 1;
 		}
 };
 
@@ -39,8 +21,21 @@ class SharpenFilter : public MatrixFilter
 	public:
 		SharpenFilter()
 		{
-			matrix = (cv::Mat_<float>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
+			size = 3;
+			matrix = new float[size * size] {0, -1, 0, -1, 5, -1, 0, -1, 0};
 		}
 };
+
+class LaplacianFilter: public MatrixFilter
+{
+public:
+	LaplacianFilter()
+	{
+		size = 3;
+		matrix = new float[size * size] {-1, -1, -1, -1, 9, -1, -1, -1, -1};
+	}
+	cv::Vec3b CalculatePixel(cv::Mat_<cv::Vec3b>& img, int row, int column);
+};
+
 
 #endif

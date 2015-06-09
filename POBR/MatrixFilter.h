@@ -6,9 +6,11 @@
 class MatrixFilter : public FilterBase<cv::Vec3b, cv::Vec3b>
 {	
 	protected:
-		cv::Mat_<float> matrix;
+		float* matrix;
+		int size;
 	public:
 		cv::Vec3b CalculatePixel(cv::Mat_<cv::Vec3b>& img, int row, int column); 
+		~MatrixFilter() { delete matrix; }
 };
 
 #endif
